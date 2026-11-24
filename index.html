@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Osuna’s 30’s</title>
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&display=swap">
+<style>
+/* Layout: pantalla negra con el título tipográfico 30’s y una hoja blanca que sube desde abajo con la rejilla de fotos. Al tocar una foto se abre el detalle a pantalla completa con el botón Descargar. */
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --tile: #d9d9d9;
+  --mute: #939393;
+  --hair: rgba(0, 0, 0, 0.1);
+  --serif: "Newsreader", "PP Kyoto", Georgia, "Times New Roman", serif;
+  --u: calc(min(100vw, 520px) / 375);
+  --inset: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--ink); }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-weight: 300;
+  font-optical-sizing: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--inset) - env(safe-area-inset-bottom, 0px));
+}
+
+body.locked { overflow: hidden; }
+
+button, a { font: inherit; }
+
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* ---------- Portada ---------- */
+.hero {
+  position: relative;
+  height: calc(var(--inset) + 644 * var(--u));
+  margin-top: calc(-1 * var(--inset));
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+  flex: none;
+}
+
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--inset) + 172 * var(--u));
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.title svg {
+  display: block;
+  width: calc(264 * var(--u));
+  height: auto;
+  color: var(--paper);
+}
+
+.cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--inset) + 576 * var(--u));
+  margin: 0;
+  text-align: center;
+  font-size: calc(16 * var(--u));
+  line-height: 1.2;
+}
+
+/* ---------- Hoja de fotos ---------- */
+.sheet {
+  position: relative;
+  flex: 1;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 24px 24px 0 0;
+}
+
+.sheet::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: 43px;
+  height: 5px;
+  margin-left: -21.5px;
+  border-radius: 100px;
+  background: var(--hair);
+}
+
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 38px 32px;
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.tile {
+  display: block;
+  width: 100%;
+  aspect-ratio: 162 / 117;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: var(--tile);
+  color: var(--mute);
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tile:hover img { opacity: 0.92; }
+
+/* ---------- Detalle ---------- */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--ink);
+  color: var(--paper);
+  overflow-y: auto;
+}
+
+.close {
+  position: absolute;
+  top: calc(12px + var(--inset));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.close svg { width: 20px; height: 20px; }
+
+.stage {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 31px;
+  padding-top: calc(72px + var(--inset));
+  padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(25px, env(safe-area-inset-left, 0px));
+  padding-right: max(25px, env(safe-area-inset-right, 0px));
+}
+
+.photo {
+  width: min(100%, 560px);
+  min-width: 0;
+}
+
+.photo .ph {
+  aspect-ratio: 322 / 233;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--tile);
+  color: var(--mute);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  max-height: 62dvh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.dl {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 322px);
+  height: 56px;
+  border-radius: 1000px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dl svg {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+}
+
+.dl[aria-disabled="true"] { opacity: 0.45; cursor: default; }
+
+.status {
+  margin: -15px 0 0;
+  min-height: 1.3em;
+  font-size: 14px;
+  color: var(--mute);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tile img { transition: opacity 0.15s ease; }
+}
+
+/* ---------- Contraseña ---------- */
+.lock {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: 8px;
+}
+
+.lock label {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--mute);
+}
+
+.lock input {
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--tile);
+  color: var(--ink);
+  font: 500 18px var(--serif);
+}
+
+.lock input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.lock button {
+  height: 56px;
+  border: 0;
+  border-radius: 1000px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 16px var(--serif);
+  cursor: pointer;
+}
+
+.lock button:disabled { opacity: 0.5; cursor: default; }
+
+.lock .msg {
+  margin: 0;
+  min-height: 1.3em;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.lock .msg.err { color: #b3261e; }
+
+/* ---------- Pantalla previa ---------- */
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  background: var(--ink);
+  color: var(--paper);
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+
+.gate .lock {
+  width: min(100%, 360px);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gate-title {
+  margin: 0 0 20px;
+  text-align: center;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.gate .lock label { color: var(--mute); }
+
+.gate .lock input {
+  background: #1b1b1b;
+  color: var(--paper);
+}
+
+.gate .lock input:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+
+.gate .lock button {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.gate .lock .msg.err { color: #ff9b91; }
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <form class="lock" id="lock" autocomplete="off">
+    <label for="pw">Contraseña</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <button type="submit" id="enter">Entrar</button>
+    <p class="msg" id="lockmsg" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<header class="hero" id="hero" hidden>
+  <h1 class="title" aria-label="Osuna’s 30’s">
+    <svg viewBox="0 0 264 257" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<path d="M224.752 40.5051C219.83 40.5051 217.624 38.7514 216.719 38.7514C216.153 38.7514 215.983 39.3171 215.644 40.4485H214.23L212.702 29.9828L214.626 29.6434C215.87 34.7348 219.208 38.4685 224.808 38.4685C229.221 38.4685 231.314 35.7531 231.314 32.4154C231.314 29.9262 229.9 28.1159 226.958 27.8331L220.962 27.2108C216.153 26.7016 212.928 24.4954 212.928 19.7999C212.928 14.7651 216.775 11.3142 222.206 11.3142C226.562 11.3142 228.768 13.3508 229.843 13.3508C230.466 13.3508 230.635 12.6719 230.975 11.3708H232.163L233.464 20.6485L231.597 20.9314C230.296 16.8582 227.184 13.3508 222.15 13.3508C218.529 13.3508 216.153 15.6702 216.153 18.7816C216.153 22.1759 218.586 23.1376 221.867 23.5336L227.354 24.1559C232.615 24.7782 234.822 27.5502 234.822 31.5102C234.822 36.6582 230.805 40.5051 224.752 40.5051Z" fill="currentColor"/>
+<path d="M201.248 15.9531C204.982 14.1429 207.301 11.0314 207.301 8.25943C207.301 7.41086 207.019 6.90171 206.566 6.90171C206.057 6.90171 205.435 7.63714 204.077 7.63714C202.04 7.63714 200.626 6.10971 200.626 4.07314C200.626 1.64057 202.436 0 204.869 0C208.037 0 210.017 2.60228 210.017 6.56228C210.017 11.3143 206.962 15.444 201.984 17.424L201.248 15.9531Z" fill="currentColor"/>
+<path d="M196.43 40.2222C193.432 40.2222 191.395 38.2422 190.999 35.4136H190.66C188.34 38.6382 185.002 40.5051 181.212 40.5051C176.573 40.5051 173.858 38.0725 173.858 34.3954C173.858 26.8148 183.645 24.6085 190.603 24.4388V20.4788C190.603 16.0096 188.284 13.2942 183.984 13.2942C181.891 13.2942 180.194 14.1994 180.194 15.7268C180.194 16.9148 181.099 17.1411 181.099 18.6685C181.099 20.2525 179.854 21.2708 178.157 21.2708C176.008 21.2708 174.706 19.9696 174.706 17.8199C174.706 14.0296 178.553 11.3142 184.041 11.3142C190.886 11.3142 194.224 14.8782 194.224 20.0262V34.3954C194.224 36.3188 195.242 37.5068 196.996 37.5068C198.58 37.5068 199.598 36.3754 199.598 34.5651V29.3605H202.087V34.3954C202.087 38.0159 199.937 40.2222 196.43 40.2222ZM178.101 33.7165C178.101 36.2056 179.854 37.6765 182.683 37.6765C185.738 37.6765 188.397 36.2622 190.603 33.2639V26.1925C185.568 26.4754 178.101 28.2856 178.101 33.7165Z" fill="currentColor"/>
+<path d="M137.327 40.0525V37.2805H140.552C142.023 37.2805 142.815 36.3188 142.815 34.5085V17.3108C142.815 15.5005 142.023 14.5388 140.552 14.5388H137.327V11.7668H146.435V17.9331C148.076 13.9165 151.244 11.3142 155.713 11.3142C160.974 11.3142 164.425 14.7085 164.425 20.0262V34.5085C164.425 36.3188 165.217 37.2805 166.688 37.2805H169.913V40.0525H156.335V37.2805H158.485C159.956 37.2805 160.805 36.2622 160.805 34.5085V20.2525C160.805 16.5754 158.711 14.3691 154.865 14.3691C149.49 14.3691 146.435 18.2725 146.435 24.8348V34.5085C146.435 36.3188 147.171 37.2805 148.585 37.2805H150.905V40.0525H137.327Z" fill="currentColor"/>
+<path d="M114.675 40.5051C109.358 40.5051 105.907 37.1108 105.907 31.7931V17.3108C105.907 15.5006 105.115 14.5388 103.644 14.5388H100.419V11.7668H109.527V31.5668C109.527 35.3006 111.621 37.4503 115.467 37.4503C120.615 37.4503 123.897 34.2257 123.897 26.9846V17.3108C123.897 15.5006 122.935 14.5388 121.011 14.5388H116.995V11.7668H127.517V34.5086C127.517 36.3188 128.366 37.2806 130.006 37.2806H133.457V40.0526H124.01V33.6034C122.595 37.7897 119.654 40.5051 114.675 40.5051Z" fill="currentColor"/>
+<path d="M86.4723 40.5051C81.5506 40.5051 79.3443 38.7514 78.4392 38.7514C77.8735 38.7514 77.7038 39.3171 77.3643 40.4485H75.95L74.4226 29.9828L76.346 29.6434C77.5906 34.7348 80.9283 38.4685 86.5289 38.4685C90.9415 38.4685 93.0346 35.7531 93.0346 32.4154C93.0346 29.9262 91.6203 28.1159 88.6786 27.8331L82.682 27.2108C77.8735 26.7016 74.6489 24.4954 74.6489 19.7999C74.6489 14.7651 78.4958 11.3142 83.9266 11.3142C88.2826 11.3142 90.4889 13.3508 91.5638 13.3508C92.186 13.3508 92.3558 12.6719 92.6952 11.3708H93.8832L95.1843 20.6485L93.3175 20.9314C92.0163 16.8582 88.9049 13.3508 83.87 13.3508C80.2495 13.3508 77.8735 15.6702 77.8735 18.7816C77.8735 22.1759 80.306 23.1376 83.5872 23.5336L89.0746 24.1559C94.3358 24.7782 96.542 27.5502 96.542 31.5102C96.542 36.6582 92.5255 40.5051 86.4723 40.5051Z" fill="currentColor"/>
+<path d="M50.2206 40.5051C40.4903 40.5051 31.552 31.3971 31.552 20.2526C31.552 9.108 40.4903 0 50.2206 0C59.9509 0 68.8891 9.108 68.8891 20.2526C68.8891 31.3971 59.9509 40.5051 50.2206 40.5051ZM50.2206 38.2989C58.4234 38.2989 63.7977 31.284 63.7977 20.2526C63.7977 9.22114 58.4234 2.20628 50.2206 2.20628C42.0177 2.20628 36.6434 9.22114 36.6434 20.2526C36.6434 31.284 42.0177 38.2989 50.2206 38.2989Z" fill="currentColor"/>
+<path d="M198.602 256.132C163.762 256.132 133.082 214.272 133.082 163.052C133.082 111.832 163.762 69.9724 198.602 69.9724C233.182 69.9724 263.862 111.832 263.862 163.052C263.862 214.272 233.182 256.132 198.602 256.132ZM198.602 245.992C225.902 245.992 240.722 216.872 240.722 163.052C240.722 109.232 225.902 80.1124 198.602 80.1124C171.042 80.1124 156.222 109.232 156.222 163.312C156.222 217.132 171.042 245.992 198.602 245.992Z" fill="currentColor"/>
+<path d="M51.22 256.132C19.76 256.132 0 242.872 0 220.252C0 207.772 7.02 197.112 18.72 197.112C27.56 197.112 33.02 202.312 33.02 210.112C33.02 220.772 23.66 221.292 23.66 230.652C23.66 240.792 33.8 246.772 51.22 246.772C77.22 246.772 92.56 230.132 92.56 201.792C92.56 174.752 72.8 157.332 47.06 157.332H32.76V149.532L44.98 147.972C70.46 144.592 84.76 132.892 84.76 113.652C84.76 97.5324 73.58 86.8724 54.6 86.8724C33.8 86.8724 19.76 98.3124 16.12 118.592H5.98C9.1 88.6924 30.42 69.9724 59.8 69.9724C85.8 69.9724 103.48 85.5724 103.48 108.452C103.48 126.652 91.52 140.432 69.68 146.412C100.1 154.212 113.36 175.012 113.36 199.712C113.36 232.992 89.44 256.132 51.22 256.132Z" fill="currentColor"/>
+<path d="M204.64 181.505C199.718 181.505 197.512 179.751 196.607 179.751C196.041 179.751 195.871 180.317 195.532 181.449H194.118L192.59 170.983L194.514 170.643C195.758 175.735 199.096 179.468 204.696 179.468C209.109 179.468 211.202 176.753 211.202 173.415C211.202 170.926 209.788 169.116 206.846 168.833L200.85 168.211C196.041 167.702 192.816 165.495 192.816 160.8C192.816 155.765 196.663 152.314 202.094 152.314C206.45 152.314 208.656 154.351 209.731 154.351C210.354 154.351 210.523 153.672 210.863 152.371H212.051L213.352 161.648L211.485 161.931C210.184 157.858 207.072 154.351 202.038 154.351C198.417 154.351 196.041 156.67 196.041 159.782C196.041 163.176 198.474 164.138 201.755 164.534L207.242 165.156C212.503 165.778 214.71 168.55 214.71 172.51C214.71 177.658 210.693 181.505 204.64 181.505Z" fill="currentColor"/>
+<path d="M181.136 156.953C184.87 155.143 187.189 152.031 187.189 149.259C187.189 148.411 186.906 147.902 186.454 147.902C185.945 147.902 185.322 148.637 183.965 148.637C181.928 148.637 180.514 147.11 180.514 145.073C180.514 142.641 182.324 141 184.757 141C187.925 141 189.905 143.602 189.905 147.562C189.905 152.314 186.85 156.444 181.871 158.424L181.136 156.953Z" fill="currentColor"/>
+</svg>
+  </h1>
+  <p class="cap">Descarga tus fotos</p>
+</header>
+
+<main class="sheet" id="sheet" hidden>
+  <div class="wrap">
+    <ul class="grid" id="grid" aria-label="Fotos" hidden></ul>
+  </div>
+</main>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Detalle de foto" hidden>
+  <button class="close" id="close" type="button" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="stage">
+    <div class="photo" id="photo"></div>
+    <a class="dl" id="dl" role="button">
+      Descargar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v1c0 1.4 0 2.1-.27 2.63a2.5 2.5 0 01-1.1 1.1C19.1 20 18.4 20 17 20H7c-1.4 0-2.1 0-2.63-.27a2.5 2.5 0 01-1.1-1.1C3 18.1 3 17.4 3 16v-1M17 10l-5 5m0 0l-5-5m5 5V3"/></svg>
+    </a>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<script>
+var CONFIG = {"iter":300000,"salt":"MLmY1f46s0A2iZ1crcjVRg==","v":{"iv":"BwYkdJSEGIMP9X1b","ct":"oKUJJ3S7VYJzd6hwmUNPXCN4zZEVVkJj"},"photos":[{"id":"e/000.txt","file":"IMG_9633.jpg"},{"id":"e/001.txt","file":"IMG_9636.jpg"},{"id":"e/002.txt","file":"IMG_9637.jpg"},{"id":"e/003.txt","file":"IMG_9640.jpg"},{"id":"e/004.txt","file":"IMG_9641.jpg"},{"id":"e/005.txt","file":"IMG_9642.jpg"},{"id":"e/006.txt","file":"IMG_9643.jpg"},{"id":"e/007.txt","file":"IMG_9645.jpg"},{"id":"e/008.txt","file":"IMG_9646.jpg"},{"id":"e/009.txt","file":"IMG_9647.jpg"},{"id":"e/010.txt","file":"IMG_9648.jpg"},{"id":"e/011.txt","file":"IMG_9649.jpg"},{"id":"e/012.txt","file":"IMG_9652.jpg"},{"id":"e/013.txt","file":"IMG_9653.jpg"},{"id":"e/014.txt","file":"IMG_9654.jpg"},{"id":"e/015.txt","file":"IMG_9655.jpg"},{"id":"e/016.txt","file":"IMG_9656.jpg"},{"id":"e/017.txt","file":"IMG_9657.jpg"},{"id":"e/018.txt","file":"IMG_9658.jpg"},{"id":"e/019.txt","file":"IMG_9659.jpg"},{"id":"e/020.txt","file":"IMG_9660.jpg"},{"id":"e/021.txt","file":"IMG_9661.jpg"},{"id":"e/022.txt","file":"IMG_9662.jpg"},{"id":"e/023.txt","file":"IMG_9663.jpg"},{"id":"e/024.txt","file":"IMG_9664.jpg"},{"id":"e/025.txt","file":"IMG_9665.jpg"},{"id":"e/026.txt","file":"IMG_9666.jpg"},{"id":"e/027.txt","file":"IMG_9667.jpg"},{"id":"e/028.txt","file":"IMG_9668.jpg"},{"id":"e/029.txt","file":"IMG_9669.jpg"},{"id":"e/030.txt","file":"IMG_9670.jpg"},{"id":"e/031.txt","file":"IMG_9671.jpg"},{"id":"e/032.txt","file":"IMG_9672.jpg"},{"id":"e/033.txt","file":"IMG_9673.jpg"},{"id":"e/034.txt","file":"IMG_9674.jpg"},{"id":"e/035.txt","file":"IMG_9675.jpg"},{"id":"e/036.txt","file":"IMG_9676.jpg"},{"id":"e/037.txt","file":"IMG_9677.jpg"},{"id":"e/038.txt","file":"IMG_9679.jpg"},{"id":"e/039.txt","file":"IMG_9680.jpg"},{"id":"e/040.txt","file":"IMG_9681.jpg"},{"id":"e/041.txt","file":"IMG_9682.jpg"},{"id":"e/042.txt","file":"IMG_9683.jpg"},{"id":"e/043.txt","file":"IMG_9684.jpg"},{"id":"e/044.txt","file":"IMG_9685.jpg"},{"id":"e/045.txt","file":"IMG_9686.jpg"},{"id":"e/046.txt","file":"IMG_9687.jpg"},{"id":"e/047.txt","file":"IMG_9688.jpg"},{"id":"e/048.txt","file":"IMG_9689.jpg"},{"id":"e/049.txt","file":"IMG_9690.jpg"},{"id":"e/050.txt","file":"IMG_9693.jpg"},{"id":"e/051.txt","file":"IMG_9694.jpg"},{"id":"e/052.txt","file":"IMG_9696.jpg"},{"id":"e/053.txt","file":"IMG_9697.jpg"},{"id":"e/054.txt","file":"IMG_9698.jpg"},{"id":"e/055.txt","file":"IMG_9701.jpg"},{"id":"e/056.txt","file":"IMG_9702.jpg"},{"id":"e/057.txt","file":"IMG_9703.jpg"},{"id":"e/058.txt","file":"IMG_9704.jpg"},{"id":"e/059.txt","file":"IMG_9705.jpg"},{"id":"e/060.txt","file":"IMG_9706.jpg"},{"id":"e/061.txt","file":"IMG_9707.jpg"},{"id":"e/062.txt","file":"IMG_9708.jpg"},{"id":"e/063.txt","file":"IMG_9709.jpg"},{"id":"e/064.txt","file":"IMG_9710.jpg"},{"id":"e/065.txt","file":"IMG_9711.jpg"},{"id":"e/066.txt","file":"IMG_9712.jpg"},{"id":"e/067.txt","file":"IMG_9713.jpg"},{"id":"e/068.txt","file":"IMG_9714.jpg"},{"id":"e/069.txt","file":"IMG_9715.jpg"},{"id":"e/070.txt","file":"IMG_9716.jpg"},{"id":"e/071.txt","file":"IMG_9717.jpg"},{"id":"e/072.txt","file":"IMG_9718.jpg"},{"id":"e/073.txt","file":"IMG_9719.jpg"},{"id":"e/074.txt","file":"IMG_9720.jpg"},{"id":"e/075.txt","file":"IMG_9721.jpg"},{"id":"e/076.txt","file":"IMG_9722.jpg"},{"id":"e/077.txt","file":"IMG_9723.jpg"},{"id":"e/078.txt","file":"IMG_9724.jpg"},{"id":"e/079.txt","file":"IMG_9725.jpg"},{"id":"e/080.txt","file":"IMG_9726.jpg"},{"id":"e/081.txt","file":"IMG_9728.jpg"},{"id":"e/082.txt","file":"IMG_9729.jpg"},{"id":"e/083.txt","file":"IMG_9730.jpg"},{"id":"e/084.txt","file":"IMG_9731.jpg"},{"id":"e/085.txt","file":"IMG_9732.jpg"},{"id":"e/086.txt","file":"IMG_9733.jpg"},{"id":"e/087.txt","file":"IMG_9734.jpg"},{"id":"e/088.txt","file":"IMG_9735.jpg"},{"id":"e/089.txt","file":"IMG_9736.jpg"},{"id":"e/090.txt","file":"IMG_9737.jpg"},{"id":"e/091.txt","file":"IMG_9738.jpg"},{"id":"e/092.txt","file":"IMG_9739.jpg"},{"id":"e/093.txt","file":"IMG_9740.jpg"},{"id":"e/094.txt","file":"IMG_9741.jpg"},{"id":"e/095.txt","file":"IMG_9742.jpg"},{"id":"e/096.txt","file":"IMG_9743.jpg"},{"id":"e/097.txt","file":"IMG_9744.jpg"},{"id":"e/098.txt","file":"IMG_9745.jpg"},{"id":"e/099.txt","file":"IMG_9746.jpg"},{"id":"e/100.txt","file":"IMG_9747.jpg"},{"id":"e/101.txt","file":"IMG_9748.jpg"},{"id":"e/102.txt","file":"IMG_9749.jpg"},{"id":"e/103.txt","file":"IMG_9750.jpg"},{"id":"e/104.txt","file":"IMG_9751.jpg"},{"id":"e/105.txt","file":"IMG_9752.jpg"},{"id":"e/106.txt","file":"IMG_9753.jpg"},{"id":"e/107.txt","file":"IMG_9754.jpg"},{"id":"e/108.txt","file":"IMG_9755.jpg"},{"id":"e/109.txt","file":"IMG_9756.jpg"},{"id":"e/110.txt","file":"IMG_9757.jpg"},{"id":"e/111.txt","file":"IMG_9758.jpg"},{"id":"e/112.txt","file":"IMG_9759.jpg"},{"id":"e/113.txt","file":"IMG_9760.jpg"},{"id":"e/114.txt","file":"IMG_9761.jpg"},{"id":"e/115.txt","file":"IMG_9762.jpg"},{"id":"e/116.txt","file":"IMG_9763.jpg"},{"id":"e/117.txt","file":"IMG_9764.jpg"},{"id":"e/118.txt","file":"IMG_9765.jpg"},{"id":"e/119.txt","file":"IMG_9766.jpg"},{"id":"e/120.txt","file":"IMG_9767.jpg"},{"id":"e/121.txt","file":"IMG_9768.jpg"},{"id":"e/122.txt","file":"IMG_9769.jpg"},{"id":"e/123.txt","file":"IMG_9770.jpg"},{"id":"e/124.txt","file":"IMG_9771.jpg"},{"id":"e/125.txt","file":"IMG_9772.jpg"},{"id":"e/126.txt","file":"IMG_9773.jpg"},{"id":"e/127.txt","file":"IMG_9774.jpg"},{"id":"e/128.txt","file":"IMG_9775.jpg"},{"id":"e/129.txt","file":"IMG_9776.jpg"},{"id":"e/130.txt","file":"IMG_9777.jpg"},{"id":"e/131.txt","file":"IMG_9778.jpg"},{"id":"e/132.txt","file":"IMG_9779.jpg"},{"id":"e/133.txt","file":"IMG_9780.jpg"},{"id":"e/134.txt","file":"IMG_9781.jpg"},{"id":"e/135.txt","file":"IMG_9782.jpg"},{"id":"e/136.txt","file":"IMG_9783.jpg"},{"id":"e/137.txt","file":"IMG_9784.jpg"},{"id":"e/138.txt","file":"IMG_9785.jpg"},{"id":"e/139.txt","file":"IMG_9786.jpg"},{"id":"e/140.txt","file":"IMG_9787.jpg"},{"id":"e/141.txt","file":"IMG_9788.jpg"},{"id":"e/142.txt","file":"IMG_9789.jpg"},{"id":"e/143.txt","file":"IMG_9790.jpg"},{"id":"e/144.txt","file":"IMG_9791.jpg"},{"id":"e/145.txt","file":"IMG_9792.jpg"},{"id":"e/146.txt","file":"IMG_9794.jpg"},{"id":"e/147.txt","file":"IMG_9795.jpg"},{"id":"e/148.txt","file":"IMG_9796.jpg"},{"id":"e/149.txt","file":"IMG_9797.jpg"},{"id":"e/150.txt","file":"IMG_9798.jpg"},{"id":"e/151.txt","file":"IMG_9799.jpg"},{"id":"e/152.txt","file":"IMG_9800.jpg"},{"id":"e/153.txt","file":"IMG_9801.jpg"},{"id":"e/154.txt","file":"IMG_9802.jpg"},{"id":"e/155.txt","file":"IMG_9803.jpg"},{"id":"e/156.txt","file":"IMG_9804.jpg"},{"id":"e/157.txt","file":"IMG_9805.jpg"},{"id":"e/158.txt","file":"IMG_9806.jpg"},{"id":"e/159.txt","file":"IMG_9807.jpg"},{"id":"e/160.txt","file":"IMG_9808.jpg"},{"id":"e/161.txt","file":"IMG_9809.jpg"},{"id":"e/162.txt","file":"IMG_9810.jpg"},{"id":"e/163.txt","file":"IMG_9811.jpg"},{"id":"e/164.txt","file":"IMG_9812.jpg"},{"id":"e/165.txt","file":"IMG_9813.jpg"},{"id":"e/166.txt","file":"IMG_9814.jpg"},{"id":"e/167.txt","file":"IMG_9815.jpg"},{"id":"e/168.txt","file":"IMG_9816.jpg"},{"id":"e/169.txt","file":"IMG_9817.jpg"},{"id":"e/170.txt","file":"IMG_9818.jpg"},{"id":"e/171.txt","file":"IMG_9819.jpg"},{"id":"e/172.txt","file":"IMG_9820.jpg"},{"id":"e/173.txt","file":"IMG_9821.jpg"},{"id":"e/174.txt","file":"IMG_9822.jpg"},{"id":"e/175.txt","file":"IMG_9823.jpg"},{"id":"e/176.txt","file":"IMG_9824.jpg"},{"id":"e/177.txt","file":"IMG_9825.jpg"},{"id":"e/178.txt","file":"IMG_9826.jpg"},{"id":"e/179.txt","file":"IMG_9827.jpg"},{"id":"e/180.txt","file":"IMG_9828.jpg"},{"id":"e/181.txt","file":"IMG_9829.jpg"},{"id":"e/182.txt","file":"IMG_9830.jpg"},{"id":"e/183.txt","file":"IMG_9831.jpg"},{"id":"e/184.txt","file":"IMG_9832.jpg"},{"id":"e/185.txt","file":"IMG_9833.jpg"},{"id":"e/186.txt","file":"IMG_9834.jpg"},{"id":"e/187.txt","file":"IMG_9835.jpg"},{"id":"e/188.txt","file":"IMG_9836.jpg"},{"id":"e/189.txt","file":"IMG_9837.jpg"},{"id":"e/190.txt","file":"IMG_9838.jpg"},{"id":"e/191.txt","file":"IMG_9839.jpg"},{"id":"e/192.txt","file":"IMG_9840.jpg"},{"id":"e/193.txt","file":"IMG_9841.jpg"},{"id":"e/194.txt","file":"IMG_9842.jpg"},{"id":"e/195.txt","file":"IMG_9843.jpg"},{"id":"e/196.txt","file":"IMG_9844.jpg"},{"id":"e/197.txt","file":"IMG_9845.jpg"},{"id":"e/198.txt","file":"IMG_9846.jpg"},{"id":"e/199.txt","file":"IMG_9847.jpg"},{"id":"e/200.txt","file":"IMG_9848.jpg"},{"id":"e/201.txt","file":"IMG_9849.jpg"},{"id":"e/202.txt","file":"IMG_9850.jpg"},{"id":"e/203.txt","file":"IMG_9851.jpg"},{"id":"e/204.txt","file":"IMG_9852.jpg"},{"id":"e/205.txt","file":"IMG_9853.jpg"},{"id":"e/206.txt","file":"IMG_9854.jpg"},{"id":"e/207.txt","file":"IMG_9855.jpg"},{"id":"e/208.txt","file":"IMG_9856.jpg"},{"id":"e/209.txt","file":"IMG_9857.jpg"},{"id":"e/210.txt","file":"IMG_9858.jpg"},{"id":"e/211.txt","file":"IMG_9859.jpg"},{"id":"e/212.txt","file":"IMG_9860.jpg"},{"id":"e/213.txt","file":"IMG_9861.jpg"},{"id":"e/214.txt","file":"IMG_9862.jpg"},{"id":"e/215.txt","file":"IMG_9863.jpg"},{"id":"e/216.txt","file":"IMG_9864.jpg"},{"id":"e/217.txt","file":"IMG_9865.jpg"},{"id":"e/218.txt","file":"IMG_9866.jpg"},{"id":"e/219.txt","file":"IMG_9867.jpg"},{"id":"e/220.txt","file":"IMG_9868.jpg"},{"id":"e/221.txt","file":"IMG_9869.jpg"},{"id":"e/222.txt","file":"IMG_9870.jpg"},{"id":"e/223.txt","file":"IMG_9871.jpg"},{"id":"e/224.txt","file":"IMG_9872.jpg"},{"id":"e/225.txt","file":"IMG_9873.jpg"},{"id":"e/226.txt","file":"IMG_9874.jpg"},{"id":"e/227.txt","file":"IMG_9875.jpg"},{"id":"e/228.txt","file":"IMG_9876.jpg"},{"id":"e/229.txt","file":"IMG_9877.jpg"},{"id":"e/230.txt","file":"IMG_9878.jpg"},{"id":"e/231.txt","file":"IMG_9879.jpg"},{"id":"e/232.txt","file":"IMG_9880.jpg"},{"id":"e/233.txt","file":"IMG_9881.jpg"},{"id":"e/234.txt","file":"IMG_9882.jpg"},{"id":"e/235.txt","file":"IMG_9883.jpg"},{"id":"e/236.txt","file":"IMG_9884.jpg"},{"id":"e/237.txt","file":"IMG_9885.jpg"},{"id":"e/238.txt","file":"IMG_9886.jpg"},{"id":"e/239.txt","file":"IMG_9887.jpg"},{"id":"e/240.txt","file":"IMG_9888.jpg"},{"id":"e/241.txt","file":"IMG_9889.jpg"},{"id":"e/242.txt","file":"IMG_9890.jpg"},{"id":"e/243.txt","file":"IMG_9891.jpg"},{"id":"e/244.txt","file":"IMG_9892.jpg"},{"id":"e/245.txt","file":"IMG_9893.jpg"},{"id":"e/246.txt","file":"IMG_9894.jpg"},{"id":"e/247.txt","file":"IMG_9895.jpg"},{"id":"e/248.txt","file":"IMG_9896.jpg"},{"id":"e/249.txt","file":"IMG_9897.jpg"},{"id":"e/250.txt","file":"IMG_9898.jpg"},{"id":"e/251.txt","file":"IMG_9899.jpg"},{"id":"e/252.txt","file":"IMG_9900.jpg"},{"id":"e/253.txt","file":"IMG_9901.jpg"},{"id":"e/254.txt","file":"IMG_9902.jpg"},{"id":"e/255.txt","file":"IMG_9903.jpg"},{"id":"e/256.txt","file":"IMG_9904.jpg"},{"id":"e/257.txt","file":"IMG_9905.jpg"},{"id":"e/258.txt","file":"IMG_9906.jpg"},{"id":"e/259.txt","file":"IMG_9907.jpg"},{"id":"e/260.txt","file":"IMG_9908.jpg"},{"id":"e/261.txt","file":"IMG_9909.jpg"},{"id":"e/262.txt","file":"IMG_9911.jpg"},{"id":"e/263.txt","file":"IMG_9912.jpg"},{"id":"e/264.txt","file":"IMG_9913.jpg"},{"id":"e/265.txt","file":"IMG_9914.jpg"},{"id":"e/266.txt","file":"IMG_9915.jpg"},{"id":"e/267.txt","file":"IMG_9917.jpg"},{"id":"e/268.txt","file":"IMG_9919.jpg"},{"id":"e/269.txt","file":"IMG_9921.jpg"},{"id":"e/270.txt","file":"IMG_9922.jpg"},{"id":"e/271.txt","file":"IMG_9923.jpg"},{"id":"e/272.txt","file":"IMG_9924.jpg"},{"id":"e/273.txt","file":"IMG_9925.jpg"},{"id":"e/274.txt","file":"IMG_9926.jpg"},{"id":"e/275.txt","file":"IMG_9927.jpg"},{"id":"e/276.txt","file":"IMG_9928.jpg"},{"id":"e/277.txt","file":"IMG_9929.jpg"},{"id":"e/278.txt","file":"IMG_9930.jpg"},{"id":"e/279.txt","file":"IMG_9931.jpg"},{"id":"e/280.txt","file":"IMG_9932.jpg"},{"id":"e/281.txt","file":"IMG_9933.jpg"},{"id":"e/282.txt","file":"IMG_9934.jpg"},{"id":"e/283.txt","file":"IMG_9935.jpg"},{"id":"e/284.txt","file":"IMG_9936.jpg"},{"id":"e/285.txt","file":"IMG_9937.jpg"},{"id":"e/286.txt","file":"IMG_9938.jpg"},{"id":"e/287.txt","file":"IMG_9939.jpg"},{"id":"e/288.txt","file":"IMG_9940.jpg"},{"id":"e/289.txt","file":"IMG_9941.jpg"},{"id":"e/290.txt","file":"IMG_9942.jpg"},{"id":"e/291.txt","file":"IMG_9943.jpg"},{"id":"e/292.txt","file":"IMG_9944.jpg"},{"id":"e/293.txt","file":"IMG_9945.jpg"},{"id":"e/294.txt","file":"foto-000.jpg"}]};
+
+(function () {
+  var PHOTOS = CONFIG.photos;
+  var grid = document.getElementById("grid");
+  var lockForm = document.getElementById("lock");
+  var pwInput = document.getElementById("pw");
+  var enterBtn = document.getElementById("enter");
+  var lockMsg = document.getElementById("lockmsg");
+  var viewer = document.getElementById("viewer");
+  var photoBox = document.getElementById("photo");
+  var dlBtn = document.getElementById("dl");
+  var statusEl = document.getElementById("status");
+  var closeBtn = document.getElementById("close");
+  var key = null;
+  var current = -1;
+  var opener = null;
+  var blobCache = {};
+  var urlCache = {};
+  var queue = [];
+  var active = 0;
+
+  function b64(s) {
+    var bin = atob(s);
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function deriveKey(pw) {
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]).then(function (km) {
+      return crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: b64(CONFIG.salt), iterations: CONFIG.iter, hash: "SHA-256" },
+        km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
+      );
+    });
+  }
+
+  function getBlob(p) {
+    if (!blobCache[p.id]) {
+      blobCache[p.id] = fetch(p.id).then(function (r) {
+        if (!r.ok) throw new Error("fetch");
+        return r.text();
+      }).then(function (t) {
+        var d = b64(t.trim());
+        return crypto.subtle.decrypt({ name: "AES-GCM", iv: d.slice(0, 12) }, key, d.slice(12));
+      }).then(function (buf) {
+        return new Blob([buf], { type: "image/jpeg" });
+      });
+      blobCache[p.id].catch(function () { delete blobCache[p.id]; });
+    }
+    return blobCache[p.id];
+  }
+
+  function getUrl(p) {
+    if (!urlCache[p.id]) {
+      urlCache[p.id] = getBlob(p).then(function (b) { return URL.createObjectURL(b); });
+      urlCache[p.id].catch(function () { delete urlCache[p.id]; });
+    }
+    return urlCache[p.id];
+  }
+
+  function pump() {
+    while (active < 4 && queue.length) {
+      var job = queue.shift();
+      active++;
+      job().then(done, done);
+    }
+    function done() { active--; pump(); }
+  }
+
+  var observer = null;
+  function loadTile(btn, i) {
+    queue.push(function () {
+      return getUrl(PHOTOS[i]).then(function (url) {
+        var img = document.createElement("img");
+        img.alt = "Foto " + (i + 1);
+        img.decoding = "async";
+        img.src = url;
+        btn.textContent = "";
+        btn.appendChild(img);
+      }, function () { btn.textContent = "Foto"; });
+    });
+    pump();
+  }
+
+  function renderGrid() {
+    grid.textContent = "";
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            observer.unobserve(en.target);
+            loadTile(en.target, Number(en.target.getAttribute("data-i")));
+          }
+        });
+      }, { rootMargin: "400px 0px" });
+    }
+    PHOTOS.forEach(function (p, i) {
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tile";
+      b.setAttribute("data-i", String(i));
+      b.setAttribute("aria-label", "Abrir foto " + (i + 1));
+      b.addEventListener("click", function () { openViewer(i, b); });
+      li.appendChild(b);
+      grid.appendChild(li);
+      if (observer) observer.observe(b); else loadTile(b, i);
+    });
+  }
+
+  function setStatus(t) { statusEl.textContent = t || ""; }
+
+  function openViewer(i, from) {
+    current = i;
+    opener = from || null;
+    var p = PHOTOS[i];
+    photoBox.textContent = "";
+    setStatus("");
+    var ph = document.createElement("div");
+    ph.className = "ph";
+    ph.textContent = "Foto";
+    photoBox.appendChild(ph);
+    dlBtn.removeAttribute("href");
+    dlBtn.removeAttribute("target");
+    dlBtn.setAttribute("aria-disabled", "true");
+    viewer.hidden = false;
+    document.body.classList.add("locked");
+    viewer.scrollTop = 0;
+    closeBtn.focus();
+    getUrl(p).then(function (url) {
+      if (current !== i) return;
+      var img = document.createElement("img");
+      img.alt = "Foto " + (i + 1);
+      img.src = url;
+      photoBox.textContent = "";
+      photoBox.appendChild(img);
+      dlBtn.removeAttribute("aria-disabled");
+      dlBtn.href = url;
+      dlBtn.setAttribute("download", p.file);
+    }, function () {
+      if (current !== i) return;
+      setStatus("No se ha podido cargar la foto. Vuelve a intentarlo.");
+    });
+  }
+
+  function closeViewer() {
+    viewer.hidden = true;
+    document.body.classList.remove("locked");
+    current = -1;
+    if (opener) opener.focus();
+  }
+
+  function step(d) {
+    if (current < 0 || PHOTOS.length < 2) return;
+    openViewer((current + d + PHOTOS.length) % PHOTOS.length, opener);
+  }
+
+  dlBtn.addEventListener("click", function (e) {
+    if (dlBtn.getAttribute("aria-disabled") === "true" || !dlBtn.getAttribute("href")) { e.preventDefault(); }
+  });
+
+  closeBtn.addEventListener("click", closeViewer);
+
+  document.addEventListener("keydown", function (e) {
+    if (viewer.hidden) return;
+    if (e.key === "Escape") closeViewer();
+    else if (e.key === "ArrowRight") step(1);
+    else if (e.key === "ArrowLeft") step(-1);
+  });
+
+  lockForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pw = pwInput.value;
+    if (!pw) return;
+    if (!window.crypto || !window.crypto.subtle) {
+      lockMsg.className = "msg err";
+      lockMsg.textContent = "Este navegador no puede abrir las fotos. Prueba con uno actualizado.";
+      return;
+    }
+    lockMsg.className = "msg";
+    lockMsg.textContent = "Comprobando…";
+    enterBtn.disabled = true;
+    deriveKey(pw).then(function (k) {
+      return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(CONFIG.v.iv) }, k, b64(CONFIG.v.ct)).then(function () {
+        key = k;
+      });
+    }).then(function () {
+      pwInput.value = "";
+      document.getElementById("gate").hidden = true;
+      document.getElementById("hero").hidden = false;
+      document.getElementById("sheet").hidden = false;
+      grid.hidden = false;
+      renderGrid();
+      window.scrollTo(0, 0);
+    }, function () {
+      lockMsg.className = "msg err";
+      lockMsg.textContent = "Contraseña incorrecta";
+      enterBtn.disabled = false;
+      pwInput.focus();
+      pwInput.select();
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
